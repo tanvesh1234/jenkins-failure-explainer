@@ -1,0 +1,9 @@
+workflow-aggregator
+pipeline-groovy-lib
+git
+configuration-as-code
+job-dsl
+cloudbees-folder
+credentials
+credentials-binding
+plain-credentials

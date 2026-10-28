@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Unit tests
+        run: ./gradlew test
+      - name: Explain every sample log (rules mode)
+        run: |
+          for f in demo/logs/*.log; do
+            ./gradlew -q explain --args="$f"
+          done
+
+  jenkins-smoke-test:
+    # Boots the real demo Jenkins and checks the step end to end (rules mode, no API key needed)
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start demo Jenkins
+        run: docker compose up -d --build
+      - name: Explain a replayed failure
+        run: ./docker/smoke-test.sh java-oom OUT_OF_MEMORY
+      - name: Explain a real failure
+        run: ./docker/smoke-test.sh real-missing-tool MISSING_TOOL
+      - name: Jenkins logs on failure
+        if: failure()
+        run: docker compose logs jenkins | tail -200

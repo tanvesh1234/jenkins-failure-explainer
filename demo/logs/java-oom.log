@@ -1,0 +1,44 @@
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/demo/reporting-batch
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Cloning repository https://github.com/acme/reporting-batch.git
+ > git rev-parse HEAD^{commit} # timeout=10
+Checking out Revision 9f2c1e4a7b3d (refs/remotes/origin/main)
+Commit message: "Load full year of transactions for annual report"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Integration Tests)
+[8mha://///4KbQ0sAAAAlh+LCAAAAAAAAP9b85aBtbiIQTGjNKU5P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyWEgYu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0m[Pipeline] sh
++ ./gradlew integrationTest --no-daemon
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :integrationTest
+
+AnnualReportIT > generatesReportForFullYear() STANDARD_OUT
+    Loading transactions 2025-01-01..2025-12-31 (4,812,330 rows)
+
+Exception in thread "Test worker" java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Arrays.java:3513)
+	at java.base/java.util.ArrayList.grow(ArrayList.java:237)
+	at com.acme.reporting.TransactionRepository.findAll(TransactionRepository.java:88)
+	at com.acme.reporting.AnnualReport.generate(AnnualReport.java:41)
+Killed
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 137
+Finished: FAILURE

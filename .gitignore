@@ -1,0 +1,11 @@
+.env
+.gradle/
+build/
+out/
+*.class
+.idea/
+*.iml
+.vscode/
+.DS_Store
+failure-explanation.md
+failure-explanation.json

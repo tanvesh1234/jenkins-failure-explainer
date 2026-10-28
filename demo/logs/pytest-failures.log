@@ -1,0 +1,54 @@
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/demo/billing-api
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Cloning repository https://github.com/acme/billing-api.git
+ > git rev-parse HEAD^{commit} # timeout=10
+Checking out Revision 9f2c1e4a7b3d (refs/remotes/origin/main)
+Commit message: "Apply GST rounding per line item"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test)
+[8mha://///4KbQ0sAAAAlh+LCAAAAAAAAP9b85aBtbiIQTGjNKU5P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyWEgYu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0m[Pipeline] sh
++ export DB_PASSWORD=Sup3rS3cret! API_TOKEN=gsk_live_abcdefghijklmnopqrstuvwx1234
++ pytest -q --junitxml=reports/junit.xml
+........................F..F.......                                      [100%]
+=================================== FAILURES ===================================
+_______________________ test_invoice_total_with_gst[INR] _______________________
+
+    def test_invoice_total_with_gst(currency):
+        invoice = make_invoice(items=[("SKU-1", 3, Decimal("99.99"))], currency=currency)
+>       assert invoice.total == Decimal("353.96")
+E       AssertionError: assert Decimal('353.97') == Decimal('353.96')
+E        +  where Decimal('353.97') = <Invoice id=1042>.total
+
+tests/test_invoice.py:41: AssertionError
+_________________________ test_credit_note_reverses_gst ________________________
+
+    def test_credit_note_reverses_gst():
+        note = make_credit_note(original=make_invoice(items=[("SKU-2", 1, Decimal("10.05"))]))
+>       assert note.tax == Decimal("-1.81")
+E       AssertionError: assert Decimal('-1.80') == Decimal('-1.81')
+
+tests/test_credit_note.py:18: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_invoice.py::test_invoice_total_with_gst[INR] - AssertionError: assert Decimal('353.97') == Decimal('353.96')
+FAILED tests/test_credit_note.py::test_credit_note_reverses_gst - AssertionError: assert Decimal('-1.80') == Decimal('-1.81')
+========================= 2 failed, 33 passed in 4.21s =========================
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

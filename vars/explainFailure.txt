@@ -1,0 +1,17 @@
+<p>
+  Explains why the current build failed. Reads the console log, removes secrets, keeps the
+  lines around the errors, and asks an LLM (any OpenAI-compatible endpoint: Groq, Gemini,
+  OpenRouter, local Ollama) for the root cause and fixes. Falls back to built-in rules when
+  no LLM is configured.
+</p>
+<p>Use it in <code>post { failure { explainFailure() } }</code>.</p>
+<dl>
+  <dt>baseUrl</dt><dd>OpenAI-compatible base URL. Default: env <code>LLM_BASE_URL</code>.</dd>
+  <dt>model</dt><dd>Model id. Default: env <code>LLM_MODEL</code>.</dd>
+  <dt>credentialsId</dt><dd>Secret-text credential holding the API key. Default <code>llm-api-key</code>. Pass null for Ollama.</dd>
+  <dt>maxLogLines</dt><dd>Lines read from the end of the log. Default 5000.</dd>
+  <dt>webhookCredentialsId / webhookUrl</dt><dd>Slack-compatible incoming webhook for a notification.</dd>
+  <dt>archive</dt><dd>Archive failure-explanation.md and .json. Default true.</dd>
+  <dt>setDescription</dt><dd>Show the one-line summary on the build page. Default true.</dd>
+  <dt>failOnError</dt><dd>Rethrow if the step itself fails. Default false.</dd>
+</dl>

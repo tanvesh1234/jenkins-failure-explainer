@@ -1,0 +1,48 @@
+# Jenkins Configuration as Code for the demo. Values in ${...} come from docker-compose / .env.
+jenkins:
+  systemMessage: "Jenkins Failure Explainer demo. Open the 'demo' folder and run any job."
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: ${JENKINS_ADMIN_PASSWORD}
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  globalNodeProperties:
+    - envVars:
+        env:
+          # Read by explainFailure(). Leave LLM_BASE_URL empty for rules-only mode.
+          - key: LLM_BASE_URL
+            value: ${LLM_BASE_URL}
+          - key: LLM_MODEL
+            value: ${LLM_MODEL}
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: llm-api-key
+              description: API key for the LLM provider (ignored by Ollama)
+              secret: ${LLM_API_KEY}
+
+unclassified:
+  globalLibraries:
+    libraries:
+      - name: failure-explainer
+        defaultVersion: main
+        implicit: false
+        allowVersionOverride: true
+        includeInChangesets: false
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: file:///opt/explainer-lib
+
+jobs:
+  - file: /opt/casc/jobs.groovy

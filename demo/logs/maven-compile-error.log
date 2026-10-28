@@ -1,0 +1,51 @@
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/demo/orders-service
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Cloning repository https://github.com/acme/orders-service.git
+ > git rev-parse HEAD^{commit} # timeout=10
+Checking out Revision 9f2c1e4a7b3d (refs/remotes/origin/main)
+Commit message: "Refactor pricing into PriceCalculator"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[8mha://///4KbQ0sAAAAlh+LCAAAAAAAAP9b85aBtbiIQTGjNKU5P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyWEgYu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0m[Pipeline] sh
++ mvn -B clean package
+[INFO] Scanning for projects...
+[INFO] ------------------------< com.acme:orders-service >------------------------
+[INFO] Building orders-service 1.4.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[[1;34mINFO[m] --- maven-resources-plugin:3.3.1:resources (default-resources) @ orders-service ---
+[INFO] Copying 3 resources
+[INFO] --- maven-compiler-plugin:3.13.0:compile (default-compile) @ orders-service ---
+[INFO] Compiling 42 source files with javac [debug release 21] to target/classes
+[WARNING] /src/main/java/com/acme/orders/LegacyMapper.java: uses unchecked or unsafe operations.
+[[1;31mERROR[m] COMPILATION ERROR :
+[ERROR] /var/jenkins_home/workspace/demo/orders-service/src/main/java/com/acme/orders/OrderService.java:[58,31] cannot find symbol
+  symbol:   method calculateTotal(java.util.List<com.acme.orders.LineItem>)
+  location: variable priceCalculator of type com.acme.orders.pricing.PriceCalculator
+[ERROR] /var/jenkins_home/workspace/demo/orders-service/src/main/java/com/acme/orders/InvoiceService.java:[33,22] cannot find symbol
+  symbol:   method calculateTotal(java.util.List<com.acme.orders.LineItem>)
+  location: variable calculator of type com.acme.orders.pricing.PriceCalculator
+[INFO] 2 errors
+[INFO] BUILD FAILURE
+[INFO] Total time:  14.862 s
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project orders-service: Compilation failure
+[ERROR] -> [Help 1]
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

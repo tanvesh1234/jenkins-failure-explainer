@@ -1,0 +1,31 @@
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/demo/payments-gateway
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Cloning repository https://github.com/acme/payments-gateway.git
+ > git rev-parse HEAD^{commit} # timeout=10
+Checking out Revision 9f2c1e4a7b3d (refs/remotes/origin/main)
+Commit message: "Bump base image to eclipse-temurin:21-jre"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Docker Image)
+[8mha://///4KbQ0sAAAAlh+LCAAAAAAAAP9b85aBtbiIQTGjNKU5P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyWEgYu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0m[Pipeline] sh
++ docker build -t registry.acme.io/payments-gateway:1.9.3 .
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

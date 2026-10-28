@@ -1,0 +1,35 @@
+// Example: using the library in your own pipeline.
+// 1. Manage Jenkins > System > Global Trusted Pipeline Libraries: add this repo as
+//    'failure-explainer' (default version: main).
+// 2. Add a Secret-text credential 'llm-api-key' and set LLM_BASE_URL / LLM_MODEL
+//    as global environment variables (or pass them below).
+@Library('failure-explainer') _
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn -B clean verify'
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                def result = explainFailure(
+                        // baseUrl: 'https://api.groq.com/openai/v1',
+                        // model: 'llama-3.1-8b-instant',
+                        // credentialsId: 'llm-api-key',
+                        webhookCredentialsId: 'slack-webhook'   // optional Secret-text credential
+                )
+                // The result is a Map you can act on, for example to open a ticket:
+                if (result?.category == 'OUT_OF_MEMORY') {
+                    echo 'Memory problem detected, paging the platform team would go here.'
+                }
+            }
+        }
+    }
+}

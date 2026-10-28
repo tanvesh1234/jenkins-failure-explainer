@@ -1,0 +1,56 @@
+// Build used only for unit tests and the local CLI. Jenkins loads the library straight from
+// src/, vars/ and resources/; it never runs this build.
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    // Tests run on Groovy 3. The library code avoids Groovy 3-only syntax so it also runs on
+    // the Groovy 2.4 engine inside Jenkins.
+    implementation 'org.codehaus.groovy:groovy:3.0.24'
+    implementation 'org.codehaus.groovy:groovy-json:3.0.24'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+sourceSets {
+    main {
+        groovy {
+            // stubs/ supplies @NonCPS outside Jenkins; cli/ is the local runner
+            srcDirs = ['src', 'stubs', 'cli']
+        }
+    }
+    test {
+        groovy {
+            srcDirs = ['test']
+        }
+    }
+}
+
+test {
+    useJUnit()
+    workingDir = projectDir      // tests read demo/logs/*.log
+    testLogging {
+        events 'passed', 'failed'
+        exceptionFormat 'full'
+    }
+}
+
+// ./gradlew explain --args="demo/logs/java-oom.log"
+tasks.register('explain', JavaExec) {
+    group = 'application'
+    description = 'Explain a saved build log. Uses LLM_BASE_URL / LLM_MODEL / LLM_API_KEY if set.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'ExplainLog'
+    workingDir = projectDir
+    standardInput = System.in
+}
